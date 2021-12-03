@@ -9,10 +9,10 @@ def add_matrices(mat1, mat2):
     y = len(mat2)
     if x != y:
         return None
- for i in mat1:
-  for j in mat2:
-new = add_matrices(i, j)
-  if new is None:
+    for i in mat1:
+        for j in mat2:
+            new = add_matrices(i, j)
+    if new is None:
         return None
     matrices.append(new)
     return matrices
