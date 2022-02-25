@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-function 1-neruon
+add class
 """
 
 import matplotlib.pyplot as plt
@@ -8,14 +8,15 @@ import numpy as np
 
 
 class Neuron:
-    """ class neuro"""
+    """neuron class"""
 
     def __init__(self, nx):
-        """function init"""
-        if type(nx) != int:
-            raise TypeError("nx must be an integer")
-        elif nx < 1:
-            raise ValueError("nx must be a positive integer")
+        """constructor"""
+        if not type(nx) is int:
+            raise TypeError('nx must be an integer')
+        if nx < 1:
+            raise ValueError('nx must be a positive integer')
+
         self.__W = np.random.randn(1, nx)
         self.__b = 0
         self.__A = 0
@@ -33,39 +34,69 @@ class Neuron:
         return self.__A
 
     def forward_prop(self, X):
-        """calc the cost of model usining logisitic"""
-        o = np.matmul(self.__W, X) + self.__b
-        self.__A = 1 / (1 + np.exp(-o))
+        """
+        forward propagation
+        """
+        i = np.matmul(self.__W, X) + self.__b
+        self.__A = 1 / (1 + np.exp(-i))
         return self.__A
 
     def cost(self, Y, A):
         """
         cost function
-        :param A:
         :param Y:
-        :return: the cost
+        :param A:
+        :return:
         """
-        c = - (np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)))
-        c /= Y.shape[1]
-        return c
+        cost = - (np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)))
+        cost /= Y.shape[1]
+        return cost
 
     def evaluate(self, X, Y):
-        """evaluate the neuron's pred"""
+        """
+        function to evaluate the neuron’s predictions
+        :param X:
+        :param Y:
+        :return:
+        """
         A = self.forward_prop(X)
-        c = self.cost(Y, A)
-        return np.where(A >= 0.5, 1, 0), c
+        cost = self.cost(Y, A)
+        return np.where(A >= 0.5, 1, 0), cost
 
     def gradient_descent(self, X, Y, A, alpha=0.05):
-        """calculate one pass of gradient"""
-        m = Y.shape[1]
-        B = np.transpose(A)
-        x = np.dot((A - Y), X.T) / m
-        y = (np.sum(A - Y)) / m
-        self.__W += - alpha * x
-        self.__b += - alpha * y
+        """
+        function Calculates one pass of gradient descent on the neuron
+        :param X:
+        :param Y:
+        :param A:
+        :param alpha:
+        :return:
+        """
+        a = X.shape[1]
+        b = A - Y
+        c = np.sum(X * b, axis=1)
+        j = np.sum(b)
+        c /= a
+        j /= a
+        self.__W = self.__W - (alpha * c)
+        self.__b = self.__b - (alpha * j)
 
-    def train(self, X, Y, iterations=5000, alpha=0.05):
-        """Function train"""
+    def train(self, X, Y, iterations=5000, alpha=0.05,
+              verbose=True, graph=True, step=100):
+        """
+        function to train neurone
+        :param step:
+        :param graph:
+        :param verbose:
+        :param self:
+        :param X:
+        :param Y:
+        :param iterations:
+        :param alpha:
+        :return:
+        """
+        co = []
+        it = []
         if type(iterations) is not int:
             raise TypeError("iterations must be an integer")
         if iterations < 0:
